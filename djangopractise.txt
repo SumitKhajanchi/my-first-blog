@@ -1,0 +1,223 @@
+Django
+
+-> Virtual environment
+Before we install Django we will get you to install an extremely useful tool to help keep your coding environment tidy on your computer.
+
+let's create a virtual environment (also called a virtualenv). Virtualenv will isolate your Python/Django setup on a per-project basis. This means that any changes you make to one website won't affect any others you're also developing.
+
+We create a directory djangopractise
+
+-> We will make a virtualenv called myvenv. The general command will be in the format:
+command-line
+c:\Users\khajancs\Desktop\djangopractise>python -m venv myvenv
+
+
+-> Working with virtualenv
+The command above will create a directory called myvenv (or whatever name you chose) that contains our virtual environment (basically a bunch of directory and files).
+
+-> Start your virtual environment by running:
+command-line
+c:\Users\khajancs\Desktop\djangopractise>myvenv\Scripts\activate
+
+-> Installing Django
+
+Before we do that, we should make sure we have the latest version of pip, the software that we use to install Django:
+command-line
+(myvenv) c:\Users\khajancs\Desktop\djangopractise>python -m pip install --upgrade pip
+Collecting pip
+  Using cached pip-9.0.3-py2.py3-none-any.whl
+Installing collected packages: pip
+  Found existing installation: pip 9.0.1
+    Uninstalling pip-9.0.1:
+      Successfully uninstalled pip-9.0.1
+Successfully installed pip-9.0.3
+
+Then run pip install django~=1.11.0 (note that we use a tilde followed by an equal sign: ~=) to install Django.
+(myvenv) c:\Users\khajancs\Desktop\djangopractise>pip install django
+Collecting django
+  Downloading Django-2.0.4-py3-none-any.whl (7.1MB)
+    100% |¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦| 7.1MB 60kB/s
+Collecting pytz (from django)
+  Downloading pytz-2018.4-py2.py3-none-any.whl (510kB)
+    100% |¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦| 512kB 54kB/s
+Installing collected packages: pytz, django
+Successfully installed django-2.0.4 pytz-2018.4
+You are using pip version 9.0.1, however version 9.0.3 is available.
+You should consider upgrading via the 'python -m pip install --upgrade pip' command.
+
+
+-> Create Project
+(myvenv) c:\Users\khajancs\Desktop\djangopractise>django-admin.exe startproject mysite .
+
+-> Changing settings
+To have the correct time on our website. We copy your relevant time zone (TZ) (e.g. Europe/Berlin).
+In settings.py, find the line that contains TIME_ZONE and modify it to choose your own timezone. For example:
+
+mysite/settings.py
+TIME_ZONE = 'Europe/Berlin'
+
+->We'll also need to add a path for static files. (We'll find out all about static files and CSS later in the tutorial.) Go down to the end of the file, and just underneath the STATIC_URL entry, add a new one called STATIC_ROOT:
+
+mysite/settings.py
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+->When DEBUG is True and ALLOWED_HOSTS is empty, the host is validated against ['localhost', '127.0.0.1', '[::1]']. This won't match our hostname on PythonAnywhere once we deploy our application so we will change the following setting:
+
+mysite/settings.py
+ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+
+->There's a lot of different database software that can store data for your site. We'll use the default one, sqlite3.
+
+This is already set up in this part of your mysite/settings.py file:
+
+mysite/settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+
+-> To create a database for our blog, let's run the following in the console: python manage.py migrate (we need to be in the djangopractise directory that contains the manage.py file). If that goes well, you should see something like this:
+
+command-line
+(myvenv) c:\Users\khajancs\Desktop\djangopractise>python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying sessions.0001_initial... OK
+
+
+->Starting the web server
+You need to be in the directory that contains the manage.py file (the djangogirls directory). In the console, we can start the web server by running python manage.py runserver:
+
+command-line
+(myvenv) c:\Users\khajancs\Desktop\djangopractise>python manage.py runserver
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 11, 2018 - 13:25:40
+Django version 2.0, using settings 'mysite.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+[11/Apr/2018 13:25:59] "GET / HTTP/1.1" 200 16559
+[11/Apr/2018 13:26:00] "GET /static/admin/css/fonts.css HTTP/1.1" 200 423
+Not Found: /favicon.ico
+[11/Apr/2018 13:26:00] "GET /favicon.ico HTTP/1.1" 404 1972
+[11/Apr/2018 13:26:00] "GET /static/admin/fonts/Roboto-Bold-webfont.woff HTTP/1.1" 200 82564
+[11/Apr/2018 13:26:00] "GET /static/admin/fonts/Roboto-Light-webfont.woff HTTP/1.1" 200 81348
+[11/Apr/2018 13:26:00] "GET /static/admin/fonts/Roboto-Regular-webfont.woff HTTP/1.1" 200 80304
+
+
+-> Now all you need to do is check that your website is running.
+Enter this address:
+
+browser
+http://127.0.0.1:8000/
+
+
+
+-> Django models
+What we want to create now is something that will store all the posts in our blog.
+our blog post needs some text with its content and a title, right? It would be also nice to know who wrote it – so we need an author. Finally, we want to know when the post was created and published.
+
+Post
+--------
+title
+text
+author
+created_date
+published_date
+What kind of things could be done with a blog post? It would be nice to have some method that publishes the post, right?
+
+So we will need a publish method.
+
+-> Now we can create a Django model for our blog post.
+A model in Django is a special kind of object – it is saved in the database
+
+Creating an application
+To keep everything tidy, we will create a separate application inside our project. It is very nice to have everything organized from the very beginning. To create an application we need to run the following command in the console
+c:\Users\khajancs\Desktop\djangopractise>python manage.py startapp blog
+
+You will notice that a new blog directory is created and it contains a number of files now. The directories and files in our project should look like this:
+
+djangogirls
++-- blog
+¦   +-- __init__.py
+¦   +-- admin.py
+¦   +-- apps.py
+¦   +-- migrations
+¦   ¦   +-- __init__.py
+¦   +-- models.py
+¦   +-- tests.py
+¦   +-- views.py
++-- db.sqlite3
++-- manage.py
++-- mysite
+    +-- __init__.py
+    +-- settings.py
+    +-- urls.py
+    +-- wsgi.py
+
+
+-> After creating an application, we also need to tell Django that it should use it. We do that in the file mysite/settings.py. We need to find INSTALLED_APPS and add a line containing 'blog', just above ]
+
+-> Creating a blog post model
+In the blog/models.py file we define all objects called Models – this is a place in which we will define our blog post.
+
+Let's open blog/models.py, remove everything from it, and write code like this:
+from django.db import models
+from django.utils import timezone
+
+class Post(models.Model):
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    created_date = models.DateTimeField(default = timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.title
+
+
+
+-> Create tables for models in your database
+The last step here is to add our new model to our database. First we have to make Django know that we have some changes in our model. (We have just created it!) Go to your console window and type python manage.py makemigrations blog. It will look like this:
+
+command-line
+c:\Users\khajancs\Desktop\djangopractise>python manage.py makemigrations blog
+Migrations for 'blog':
+  blog\migrations\0001_initial.py
+    - Create model Post
+
+
+-> Django prepared a migration file for us that we now have to apply to our database. Type python manage.py migrate blog and the output should be as follows:
+
+command-line
+c:\Users\khajancs\Desktop\djangopractise> python manage.py migrate blog
+Operations to perform:
+  Apply all migrations: blog
+Running migrations:
+  Applying blog.0001_initial... OK
+
+
+-> 
