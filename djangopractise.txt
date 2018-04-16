@@ -11,7 +11,6 @@ We create a directory djangopractise
 command-line
 c:\Users\khajancs\Desktop\djangopractise>python -m venv myvenv
 
-
 -> Working with virtualenv
 The command above will create a directory called myvenv (or whatever name you chose) that contains our virtual environment (basically a bunch of directory and files).
 
@@ -220,4 +219,217 @@ Running migrations:
   Applying blog.0001_initial... OK
 
 
--> 
+-------------------------------------------------Django admin-------------------------------------------------
+
+-> To add, edit and delete the posts we've just modeled, we will use Django admin.
+	Let's open the blog/admin.py file and replace its contents with this:
+
+blog/admin.py
+from django.contrib import admin
+from .models import Post
+
+admin.site.register(Post)
+
+#To make our model visible on the admin page, we need to register the model with admin.site.register(Post).
+
+Now run python manage.py runserver in the console to run the web server. Go to your browser and type the address http://127.0.0.1:8000/admin/.
+
+To log in, you need to create a superuser - a user account that has control over everything on the site. Go back to the command line, type python manage.py createsuperuser, and press enter.
+
+c:\Users\khajancs\Desktop\djangopractise>python manage.py createsuperuser
+Username (leave blank to use '983469'): sumit
+Email address: sumit@gmail.com
+Password: khajanchi
+Password (again): khajanchi
+Superuser created successfully.
+
+
+(sumitkhajanchi.pythonanywhere.com) 18:39 ~/sumitkhajanchi.pythonanywhere.com (master)$ python manage.py createsuperuser
+Username (leave blank to use 'sumitkhajanchi'): 
+Email address: khajanchi.sumit24@gmail.com
+Password: Mayank123/Mayank@123
+
+Go to Posts and experiment a little bit with it. Add five or six blog posts.
+
+
+-------------------------------------------------Deploy-------------------------------------------------
+
+-> Until now our website was available only on our computer now we will be publishing it over  internet.
+-> There are a lot of server providers available on the internet, we're going to use PythonAnywhere -https://www.pythonanywhere.com/.
+-> The other external service we'll be using is GitHub, which is a code hosting service. 
+-> These three places will be important to you. Your local computer will be the place where you do development and testing. When you're happy with the changes, you will place a copy of your program    on GitHub. Your website will be on PythonAnywhere and you will update it by getting a new copy of your code from GitHub.
+	
+	download Git from git-scm.com. You can hit "next" on all steps except for one; in the step entitled "Adjusting your PATH environment", choose "Use Git and optional Unix tools from the Windows Command Prompt" (the bottom option). 
+
+-> Starting our Git repository
+	Open up your console and run these commands, in the djangogirls directory:
+command-line
+$ git init
+Initialized empty Git repository in ~/djangogirls/.git/
+$ git config --global user.name "Your Name"
+$ git config --global user.email you@example.com
+
+-> Initializing the git repository is something we need to do only once per project (and you won't have to re-enter the username and email ever again).
+-> Git will track changes to all the files and folders in this directory, but there are some files we want it to ignore. We do this by creating a file called .gitignore in the base directory. Open up your editor and create a new file with the following contents:
+
+.gitignore
+*.pyc
+*~
+__pycache__
+myvenv
+db.sqlite3
+/static
+.DS_Store
+
+-> save it as .gitignore in the "djangogirls" folder.
+-> It's a good idea to use a git status command before git add or whenever you find yourself unsure of what has changed.
+
+c:\Users\khajancs\Desktop\djangopractise>git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        .gitignore
+        blog/
+        djangopractise.txt
+        manage.py
+        mysite/
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+-> nothing added to commit but untracked files present (use "git add" to track)
+
+c:\Users\khajancs\Desktop\djangopractise>git add --all
+
+c:\Users\khajancs\Desktop\djangopractise>git commit -m "My Django Girls app, first commit"
+[master (root-commit) 6b1e2c0] My Django Girls app, first commit
+ 15 files changed, 466 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 blog/__init__.py
+ create mode 100644 blog/admin.py
+ create mode 100644 blog/apps.py
+ create mode 100644 blog/migrations/0001_initial.py
+ create mode 100644 blog/migrations/__init__.py
+ create mode 100644 blog/models.py
+ create mode 100644 blog/tests.py
+ create mode 100644 blog/views.py
+ create mode 100644 djangopractise.txt
+ create mode 100644 manage.py
+ create mode 100644 mysite/__init__.py
+ create mode 100644 mysite/settings.py
+ create mode 100644 mysite/urls.py
+ create mode 100644 mysite/wsgi.py
+
+-------------------------------------------------Pushing Code to GitHub-------------------------------------------------
+Signup on GitHub.com
+Then, create a new repository, giving it the name "my-first-blog". Leave the "initialize with a README" checkbox unchecked, leave the .gitignore option blank (we've done that manually) and leave the License as None.
+On the next screen, you'll be shown your repo's clone URL. Choose the "HTTPS" version, copy it,
+
+Type the following into your console (Replace <your-github-username> with the username you entered when you created your GitHub account, but without the angle-brackets):
+
+command-line
+$ git remote add origin https://github.com/<your-github-username>/my-first-blog.git
+$ git push -u origin master
+Enter your GitHub username and password and you should see something like this:
+
+command-line
+Username for 'https://github.com': sumitkhajanchi
+Password for 'https://ola@github.com':Sumit2406
+Counting objects: 6, done.
+Writing objects: 100% (6/6), 200 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://github.com/ola/my-first-blog.git
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin.
+Your code is now on GitHub. Go and check it out!
+
+-------------------------------------------------Setting up our blog on PythonAnywhere-------------------------------------------------
+
+-> Sign up for a free "Beginner" account on PythonAnywhere: www.pythonanywhere.com
+-> Creating a PythonAnywhere API token
+	This is something you only need to do once. When you've signed up for PythonAnywhere, you'll be taken to your dashboard. Find the link near the top right to your "Accounts" page, then 	select the tab named "API token", and hit the button that says "Create new API token".
+
+Configuring our site on PythonAnywhere
+-> Go back to the main PythonAnywhere Dashboard by clicking on the logo, and choose the option to start a "Bash" console – that's the PythonAnywhere version of a command line, just like the one on your computer.
+
+-> Deploying a web app on PythonAnywhere involves pulling down your code from GitHub, and then configuring PythonAnywhere to recognise it and start serving it as a web application. There are manual ways of doing it, but PythonAnywhere provides a helper tool that will do it all for you. Let's install it first:
+
+PythonAnywhere command-line
+$ pip3.6 install --user pythonanywhere
+
+-> That should print out some things like Collecting pythonanywhere, and eventually end with a line saying Successfully installed (...) pythonanywhere- (...).
+
+Now we run the helper to automatically configure our app from GitHub. Type the following into the console on PythonAnywhere (don't forget to use your GitHub username in place of <your-github-username>):
+
+PythonAnywhere command-line
+$ pa_autoconfigure_django.py https://github.com/<your-github-username>/my-first-blog.git
+
+-> The main thing to notice right now is that your database on PythonAnywhere is actually totally separate from your database on your own PC—that means it can have different posts and admin accounts.
+
+-> As a result, just as we did on your own computer, we need to initialize the admin account with createsuperuser. PythonAnywhere has automatically activated your virtualenv for you, so all you need to do is run:
+
+PythonAnywhere command-line
+(ola.pythonanywhere.com) $ python manage.py createsuperuser
+Type in the details for your admin user. Best to use the same ones as you're using on your own computer to avoid any confusion, unless you want to make the password on PythonAnywhere more secure.
+
+Now, if you like, you can also take a look at your code on PythonAnywhere using ls:
+
+PythonAnywhere command-line
+(ola.pythonanywhere.com) $ ls
+blog  db.sqlite3  manage.py  mysite  static
+(ola.pythonanywhere.com) $ ls blog/
+__init__.py  __pycache__  admin.py  forms.py  migrations  models.py  static
+templates  tests.py  urls.py  views.py
+
+
+
+-------------------------------------------------In case of commiting any new changes-------------------------------------------------
+
+c:\Users\khajancs\Desktop\djangopractise>git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   mysite/urls.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+c:\Users\khajancs\Desktop\djangopractise>git add --all
+
+c:\Users\khajancs\Desktop\djangopractise>git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   mysite/urls.py
+
+
+c:\Users\khajancs\Desktop\djangopractise>git commit -m "My Django Girls app, first commit"
+[master 8923812] My Django Girls app, first commit
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+c:\Users\khajancs\Desktop\djangopractise>git push -u origin master
+Counting objects: 4, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 413 bytes | 137.00 KiB/s, done.
+Total 4 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/SumitKhajanchi/my-first-blog.git
+   6b1e2c0..8923812  master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+
+c:\Users\khajancs\Desktop\djangopractise>git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+
