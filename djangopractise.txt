@@ -416,7 +416,7 @@ c:\Users\khajancs\Desktop\djangopractise>git commit -m "My Django Girls app, fir
 [master 8923812] My Django Girls app, first commit
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-c:\Users\khajancs\Desktop\djangopractise>git push -u origin master
+c:\Users\khajancs\Desktop\djangopractise>git push
 Counting objects: 4, done.
 Delta compression using up to 4 threads.
 Compressing objects: 100% (4/4), done.
@@ -433,3 +433,245 @@ Your branch is up to date with 'origin/master'.
 
 nothing to commit, working tree clean
 
+-------------------------------------------------Pull new codeto Python Anywhere-------------------------------------------------
+
+-> Open up the PythonAnywhere consoles page and go to your Bash console (or start a new one). Then, run:
+command-line
+$ cd ~/<your-pythonanywhere-username>.pythonanywhere.com
+$ git pull
+[...]
+
+
+-------------------------------------------------Django URLs-------------------------------------------------
+
+-> URLconf is a set of patterns that Django will try to match the requested URL to find the correct view.
+
+Regex
+-> Do you wonder how Django matches URLs to views? Well, this part is tricky. Django uses regex, short for "regular expressions". Regex has a lot (a lot!) of rules that form a search pattern.
+-> here is an example of the process – we will only need a limited subset of the rules to express the pattern we are looking for, namely:
+
+^ for the beginning of the text
+$ for the end of the text
+\d for a digit
++ to indicate that the previous item should be repeated at least once
+() to capture part of the pattern
+
+Now imagine you have a website with the address like http://www.mysite.com/post/12345/, where 12345 is the number of your post.
+
+Writing separate views for all the post numbers would be really annoying. With regular expressions, we can create a pattern that will match the URL and extract the number for us: ^post/(\d+)/$. Let's break this down piece by piece to see what we are doing here:
+
+^post/ is telling Django to take anything that has post/ at the beginning of the URL (right after ^)
+(\d+) means that there will be a number (one or more digits) and that we want the number captured and extracted
+/ tells Django that another / character should follow
+$ then indicates the end of the URL meaning that only strings ending with the / will match this pattern
+
+
+-> We want 'http://127.0.0.1:8000/' to be the home page of our blog and to display a list of posts.
+-> We also want to keep the mysite/urls.py file clean, so we will import URLs from our blog application to the main mysite/urls.py file.
+-> Add a line that will import blog.urls.
+mysite/urls.py file should now look like this:
+
+mysite/urls.py
+from django.conf.urls import include
+from django.conf.urls import url
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'', include('blog.urls')),
+]
+
+Django will now redirect everything that comes into 'http://127.0.0.1:8000/' to blog.urls and looks for further instructions there.
+
+
+blog.urls
+-> Create a new empty file named urls.py in the blog directory.
+blog/urls.py
+from django.conf.urls import url
+from . import views
+
+-> Here we're importing Django's function url and all of our views from the blog application.
+After that, we can add our first URL pattern:
+
+blog/urls.py
+urlpatterns = [
+    url(r'^$', views.post_list, name='post_list'),
+]
+
+-> As you can see, we're now assigning a view called post_list to the ^$ URL. This regular expression will match ^ (a beginning) followed by $ (an end) – so only an empty string will match. That's correct, because in Django URL resolvers, 'http://127.0.0.1:8000/' is not a part of the URL. This pattern will tell Django that views.post_list is the right place to go if someone enters your website at the 'http://127.0.0.1:8000/' address.
+
+-------------------------------------------------Django views – time to create!-------------------------------------------------
+
+
+->  view is a place where we put the "logic" of our application. It will request information from the model you created before and pass it to a template.
+-> Views are placed in the views.py file. We will add our views to the blog/views.py file.
+
+blog/views.py
+from django.shortcuts import render
+
+def post_list(request):
+    return render(request, 'blog/post_list.html', {})
+
+-> We created a function (def) called post_list that takes request and return a function render that will render (put together) our template blog/post_list.html.
+
+-> Save the file, go to http://127.0.0.1:8000/ and see what we've got.
+	Another error! Read what's going on now:
+	TemplateDoesNotExist at /
+	blog/post_list.html
+
+-------------------------------------------------Your first template!-------------------------------------------------
+
+-> emplates are saved in blog/templates/blog directory. So first create a directory called templates inside your blog directory. Then create another directory called blog inside your templates directory:
+
+blog
++---templates
+    +---blog
+
+-> And now create a post_list.html file (just leave it blank for now) inside the blog/templates/blog directory.
+here is an example :
+
+blog/templates/blog/post_list.html:
+
+blog/templates/blog/post_list.html
+<html>
+    <head>
+        <title>Django Girls blog</title>
+    </head>
+    <body>
+        <div>
+            <h1><a href="/">Django Girls Blog</a></h1>
+        </div>
+
+        <div>
+            <p>published: 14.06.2014, 12:14</p>
+            <h2><a href="">My first post</a></h2>
+            <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        </div>
+
+        <div>
+            <p>published: 14.06.2014, 12:14</p>
+            <h2><a href="">My second post</a></h2>
+            <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut f.</p>
+        </div>
+    </body>
+</html>
+
+
+-------------------------------------------------Django ORM and QuerySets-------------------------------------------------
+
+-> We'll learn how Django connects to the database and stores data in it.
+-> A QuerySet is, in essence, a list of objects of a given Model. QuerySets allow you to read the data from the database, filter it and order it.
+-> Open up your local console (not on PythonAnywhere) and type this command:
+
+command-line
+(myvenv) ~/djangogirls$ python manage.py shell
+The effect should be like this:
+
+command-line
+(InteractiveConsole)
+>>>
+
+-> Let's try to display all of our posts first. You can do that with the following command:
+
+command-line
+>>> Post.objects.all()
+Traceback (most recent call last):
+      File "<console>", line 1, in <module>
+NameError: name 'Post' is not defined
+
+-> we forgot to import it first!
+
+command-line
+>>> from blog.models import Post
+We import the model Post from blog.models. Let's try displaying all posts again:
+
+command-line
+>>> Post.objects.all()
+<QuerySet [<Post: Renewable Energy 1>, <Post: Renewable Energy 2>, <Post: Renewable Energy 3>]>
+
+-> This is a list of the posts we created earlier! We created these posts using the Django admin interface. But now we want to create new posts using Python
+
+Create object
+This is how you create a new Post object in database:
+
+command-line
+>>> Post.objects.create(author=me, title='Sample title', text='Test')
+-> But we have one missing ingredient here: me. We need to pass an instance of User model as an author.
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+NameError: name 'me' is not defined
+
+-> Let's import User model first:
+
+command-line
+>>> from django.contrib.auth.models import User
+What users do we have in our database? Try this:
+
+command-line
+>>> User.objects.all()
+<QuerySet [<User: sumit>]>
+This is the superuser we created earlier! Let's get an instance of the user now:
+
+command-line
+>>> me = User.objects.get(username='sumit')
+
+-> As you can see, we now get a User with a username that equals 'sumit'. Neat! Of course, you have to adjust this line to use your own username.
+
+Now we can finally create our post:
+
+command-line
+>>> Post.objects.create(author=me, title='Sample title', text='Test')
+<Post: Sample title>
+Hurray! Wanna check if it worked?
+
+command-line
+>>> Post.objects.all()
+<QuerySet [<Post: Renewable Energy 1>, <Post: Renewable Energy 2>, <Post: Renewable Energy 3>, <Post: Sample title>]>
+
+
+-> Filter objects
+A big part of QuerySets is the ability to filter them. Let's say we want to find all posts that user ola authored. We will use filter instead of all in Post.objects.all(). In parentheses we state what condition(s) a blog post needs to meet to end up in our queryset. In our case, the condition is that author should be equal to me. The way to write it in Django is author=me. Now our piece of code looks like this:
+
+command-line
+>>> Post.objects.filter(author=me)
+<QuerySet [<Post: Renewable Energy 1>, <Post: Renewable Energy 2>, <Post: Renewable Energy 3>, <Post: Sample title>]>
+
+
+-> Maybe we want to see all the posts that contain the word 'title' in the title field?
+command-line
+>>> Post.objects.filter(title__contains='title')
+<QuerySet [<Post: Sample title>]>
+
+
+You can also get a list of all published posts. We do this by filtering all the posts that have published_date set in the past:
+
+command-line
+>>> from django.utils import timezone
+>>> Post.objects.filter(published_date__lte=timezone.now())
+<QuerySet []>
+Unfortunately, the post we added from the Python console is not published yet. But we can change that! First get an instance of a post we want to publish:
+
+command-line
+>>> post = Post.objects.get(title="Sample title")
+And then publish it with our publish method:
+
+command-line
+>>> post.publish()
+Now try to get list of published posts again (press the up arrow key three times and hit enter):
+
+command-line
+>>> Post.objects.filter(published_date__lte=timezone.now())
+<QuerySet [<Post: Sample title>]>
+
+
+Ordering objects
+QuerySets also allow you to order the list of objects. Let's try to order them by created_date field:
+
+command-line
+>>> Post.objects.order_by('created_date')
+<QuerySet [<Post: Sample title>, <Post: Post number 2>, <Post: My 3rd post!>, <Post: 4th title of post>]>
+We can also reverse the ordering by adding - at the beginning:
+
+command-line
+>>> Post.objects.order_by('-created_date')
+<QuerySet [<Post: 4th title of post>,  <Post: My 3rd post!>, <Post: Post number 2>, <Post: Sample t
